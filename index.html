@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiology AI Copilot - Next Generation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        /* Glassmorphism Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-dark {
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Header Moderno */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding: 20px 32px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* Cards de Métricas */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .metric-card:hover::before {
+            left: 100%;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Alertas Críticos */
+        .critical-alert-card {
+            background: linear-gradient(135deg, #fee2e2 0%, #ffebeb 100%);
+            border-left: 4px solid #dc2626;
+            animation: fadeInUp 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .critical-alert-card::after {
+            content: 'URGENTE';
+            position: absolute;
+            top: 10px;
+            right: -20px;
+            background: #dc2626;
+            color: white;
+            padding: 4px 40px;
+            transform: rotate(45deg);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Timeline Interativa */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px 0 20px 40px;
+            border-left: 2px solid #e5e7eb;
+            margin-left: 20px;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(8px);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -11px;
+            top: 24px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover .timeline-dot {
+            transform: scale(1.2);
+            box-shadow: 0 0 0 6px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Botões Modernos */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Loader Animado */
+        .ai-loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tabela Moderna */
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        .modern-table tr {
+            background: white;
+            border-radius: 16px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .modern-table tr:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .modern-table td {
+            padding: 16px;
+            border: none;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .badge-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        /* Modal Moderno */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar Customizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        /* Gradiente Animado no Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 10s ease infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="container">
+        <!-- Header Moderno -->
+        <div class="header animate-fadeInUp">
+            <div class="logo">
+                <div class="logo-icon">
+                    🧠
+                </div>
+                <div class="logo-text">
+                    Radiology AI Copilot
+                </div>
+                <div class="badge badge-success" style="margin-left: 12px;">
+                    <span>⚡</span> LIVE
+                </div>
+            </div>
+            <div class="user-profile">
+                <div class="notification-badge">
+                    🔔
+                    <div class="notification-dot"></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="text-align: right;">
+                        <div style="font-weight: 600;">Dr. Carlos Mendes</div>
+                        <div style="font-size: 12px; color: #6b7280;">Radiologista Senior</div>
+                    </div>
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">
+                        CM
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Métricas Grid -->
+        <div class="metrics-grid animate-fadeInUp" style="animation-delay: 0.1s;">
+            <div class="metric-card">
+                <div class="metric-icon" style="background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);">
+                    📊
+                </div>
+                <div class="metric-value">47</div>
+                <div style="color: #6b7280; margin-bottom: 8px;">Exames Hoje</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #10b981;">↑ 12%</span>
+                    <span style="font-size: 12px; color: #6b7280;">vs ontem</span>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-icon" style="background: linear-gradient(135deg, #10b98120 0%, #05966920 100%);">
+                    🤖
+                </div>
+                <div class="metric-value">89<span style="font-size: 20px;">%</span></div>
+                <div style="color: #6b7280; margin-bottom: 8px;">Laudos com IA</div>
+                <div class="badge badge-success">+35% eficiência</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-icon" style="background: linear-gradient(135deg, #f59e0b20 0%, #d9770620 100%);">
+                    ⏱️
+                </div>
+                <div class="metric-value">4.2<span style="font-size: 20px;">min</span></div>
+                <div style="color: #6b7280; margin-bottom: 8px;">Tempo Médio</div>
+                <div style="color: #10b981;">↓ 35% com IA</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-icon" style="background: linear-gradient(135deg, #8b5cf620 0%, #7c3aed20 100%);">
+                    🔍
+                </div>
+                <div class="metric-value">156</div>
+                <div style="color: #6b7280; margin-bottom: 8px;">Buscas IA</div>
+                <div style="font-size: 12px;">última semana</div>
+            </div>
+        </div>
+
+        <!-- Alertas Críticos e Sugestões IA -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+            <!-- Alertas Críticos -->
+            <div class="critical-alert-card glass" style="padding: 24px; border-radius: 20px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div style="font-size: 32px;">🚨</div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 18px; color: #dc2626;">ACHADOS CRÍTICOS DETECTADOS</div>
+                        <div style="font-size: 14px; color: #6b7280;">IA identificou 2 exames prioritários</div>
+                    </div>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item" onclick="openExam('study_4421')">
+                        <div class="timeline-dot" style="background: #dc2626;"></div>
+                        <div style="font-weight: 600;">Paciente #4421 - Maria Silva</div>
+                        <div style="font-size: 14px; color: #6b7280;">TC Tórax - Há 15 minutos</div>
+                        <div style="margin-top: 8px; padding: 8px; background: rgba(220, 38, 38, 0.1); border-radius: 8px;">
+                            ⚠️ Nódulo pulmonar com características de malignidade (crescimento 1.2cm → 2.1cm)
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="openExam('study_3289')">
+                        <div class="timeline-dot" style="background: #dc2626;"></div>
+                        <div style="font-weight: 600;">Paciente #3289 - João Santos</div>
+                        <div style="font-size: 14px; color: #6b7280;">RNM Crânio - Há 2 horas</div>
+                        <div style="margin-top: 8px; padding: 8px; background: rgba(220, 38, 38, 0.1); border-radius: 8px;">
+                            🧠 Hemorragia intracraniana aguda detectada
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-primary" style="width: 100%; margin-top: 16px;" onclick="prioritizeAll()">
+                    📢 Priorizar Todos os Exames Urgentes
+                </button>
+            </div>
+
+            <!-- Sugestões IA -->
+            <div class="glass" style="padding: 24px; border-radius: 20px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div style="font-size: 32px;">🤖</div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 18px;">Sugestões do Copiloto IA</div>
+                        <div style="font-size: 14px;">Baseado em análise de 1,247 casos similares</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 16px; padding: 12px; background: white; border-radius: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">Pré-laudo disponível</div>
+                            <div style="font-size: 12px; color: #6b7280;">12 exames aguardando revisão</div>
+                        </div>
+                        <div class="badge badge-success">Novo</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 16px; padding: 12px; background: white; border-radius: 12px;">
+                    <div style="font-weight: 600;">📈 Evolução detectada</div>
+                    <div style="font-size: 14px; margin-top: 4px;">Paciente #5592: Nódulo aumentou 40% em 6 meses</div>
+                </div>
+                <div style="padding: 12px; background: white; border-radius: 12px;">
+                    <div style="font-weight: 600;">💡 Diagnóstico diferencial</div>
+                    <div style="font-size: 14px; margin-top: 4px;">Baseado em histórico: considerar metástase pulmonar</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fila de Exames com IA -->
+        <div class="glass" style="padding: 24px; border-radius: 20px; margin-bottom: 32px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 24px; font-weight: 700;">📋 Fila de Exames</h2>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn-primary" style="background: white; color: #667eea; border: 1px solid #e5e7eb;" onclick="refreshList()">
+                        🔄 Atualizar
+                    </button>
+                    <button class="btn-primary" onclick="openAIAnalytics()">
+                        📊 Análise IA
+                    </button>
+                </div>
+            </div>
+            
+            <table class="modern-table">
+                <thead>
+                    <tr style="background: transparent;">
+                        <td style="font-weight: 600;">Paciente</td>
+                        <td style="font-weight: 600;">Exame</td>
+                        <td style="font-weight: 600;">Data</td>
+                        <td style="font-weight: 600;">Status IA</td>
+                        <td style="font-weight: 600;">Ações</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr onclick="openExam('study_123')">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    👤
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600;">Maria Silva</div>
+                                    <div style="font-size: 12px; color: #6b7280;">ID: #4421</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>TC Tórax</td>
+                        <td>15/01/2026</td>
+                        <td>
+                            <div class="badge badge-success" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                ✅ Pré-laudo pronto
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn-primary" style="padding: 8px 16px;" onclick="event.stopPropagation(); openExam('study_123')">
+                                Abrir com IA
+                            </button>
+                        </td>
+                    </tr>
+                    <tr onclick="openExam('study_124')" style="border: 2px solid rgba(220, 38, 38, 0.3);">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 32px; height: 32px; background: rgba(220, 38, 38, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    👤
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600;">João Santos</div>
+                                    <div style="font-size: 12px; color: #6b7280;">ID: #3289</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>RNM Crânio</td>
+                        <td>15/01/2026</td>
+                        <td>
+                            <div class="badge badge-warning">
+                                ⚠️ Achado crítico
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn-primary" style="background: #dc2626; padding: 8px 16px;" onclick="event.stopPropagation(); openExam('study_124')">
+                                🚨 Urgente
+                            </button>
+                        </td>
+                    </tr>
+                    <tr onclick="openExam('study_125')">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    👤
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600;">Ana Oliveira</div>
+                                    <div style="font-size: 12px; color: #6b7280;">ID: #5592</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>USG Abdome</td>
+                        <td>14/01/2026</td>
+                        <td>
+                            <div class="badge badge-success">
+                                🔄 Processando IA
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn-primary" style="padding: 8px 16px;" onclick="event.stopPropagation(); openExam('study_125')">
+                                <div class="ai-loader" style="width: 16px; height: 16px;"></div>
+                                Aguardando
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Timeline do Paciente (Preview) -->
+        <div class="glass" style="padding: 24px; border-radius: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 24px; font-weight: 700;">📈 Evolução do Paciente - Maria Silva</h2>
+                <button class="btn-primary" onclick="viewFullTimeline()">
+                    Ver Timeline Completa →
+                </button>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div style="font-weight: 600;">15/01/2024 - TC Tórax</div>
+                        <div class="badge badge-success">Base</div>
+                    </div>
+                    <div>Nódulo: 1.0cm | Bordas bem definidas</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background: #f59e0b;"></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div style="font-weight: 600;">10/01/2025 - TC Tórax</div>
+                        <div class="badge badge-warning">Progressão</div>
+                    </div>
+                    <div>Nódulo: 1.2cm | Bordas irregulares</div>
+                    <div style="margin-top: 8px; padding: 8px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
+                        🤖 IA: "Crescimento detectado - recomendar seguimento"
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background: #dc2626; animation: pulse 2s infinite;"></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div style="font-weight: 600;">15/01/2026 - TC Tórax (ATUAL)</div>
+                        <div class="badge badge-warning">🚨 URGENTE</div>
+                    </div>
+                    <div>Nódulo: 2.1cm | Bordas espiculadas | +110% crescimento</div>
+                    <div style="margin-top: 8px; padding: 8px; background: rgba(220, 38, 38, 0.1); border-radius: 8px;">
+                        🤖 IA: "Alta suspeita de malignidade - investigação oncológica urgente"
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Exame com IA -->
+    <div id="examModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>🖼️ Exame com IA Copiloto</h2>
+                <button onclick="closeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div id="examContent">
+                <!-- Conteúdo dinâmico do exame -->
+                <div style="text-align: center; padding: 40px;">
+                    <div class="ai-loader" style="width: 40px; height: 40px;"></div>
+                    <p>Carregando dados da IA...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funções Interativas
+        function openExam(studyUid) {
+            const modal = document.getElementById('examModal');
+            modal.style.display = 'block';
+            
+            // Simular carregamento de dados da IA
+            setTimeout(() => {
+                document.getElementById('examContent').innerHTML = `
+                    <div style="background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%); padding: 20px; border-radius: 16px; margin-bottom: 20px;">
+                        <h3>🤖 Pré-laudo Gerado pela IA</h3>
+                        <textarea style="width: 100%; min-height: 200px; margin-top: 12px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: monospace;">
+ACHADOS:
+Nódulo em lobo superior direito medindo 2.1cm, com bordas espiculadas e crescimento significativo (1.2cm → 2.1cm em 6 meses).
+Demais parênquima pulmonar sem alterações significativas.
+
+CONCLUSÃO:
+Nódulo com características sugestivas de malignidade. Recomendar investigação oncológica e PET-CT.
+                        </textarea>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-primary" onclick="acceptLaudo()">✅ Aceitar e Assinar</button>
+                        <button class="btn-primary" style="background: #6b7280;" onclick="regenerate()">🔄 Regenerar</button>
+                        <button class="btn-primary" style="background: #10b981;" onclick="simplifyForPatient()">👤 Versão Paciente</button>
+                    </div>
+                `;
+            }, 1000);
+        }
+        
+        function closeModal() {
+            document.getElementById('examModal').style.display = 'none';
+        }
+        
+        function acceptLaudo() {
+            alert("✅ Laudo assinado! IA registrada como copiloto.\nRastreabilidade garantida conforme LGPD.");
+            closeModal();
+        }
+        
+        function regenerate() {
+            alert("🔄 Regenerando pré-laudo com mais contexto histórico...");
+        }
+        
+        function simplifyForPatient() {
+            alert("👤 Versão simplificada para paciente:\n\n'Foi encontrado um nódulo no pulmão que cresceu nos últimos meses. Recomendamos uma investigação mais detalhada.'");
+        }
+        
+        function prioritizeAll() {
+            alert("📢 Alertas enviados para equipe médica via WhatsApp, SMS e Slack!");
+        }
+        
+        function refreshList() {
+            alert("🔄 Atualizando lista de exames...");
+        }
+        
+        function openAIAnalytics() {
+            alert("📊 Abrindo painel de análise IA...");
+        }
+        
+        function viewFullTimeline() {
+            alert("📈 Abrindo timeline completa do paciente...");
+        }
+        
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('examModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // Efeito de loading nos cards
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
